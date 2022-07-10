@@ -11,10 +11,10 @@ enum LogLineType {
     P2pPeersAvailableSkippedDnsSeeding, // https://github.com/bitcoin/bitcoin/blob/d571cf2d2421c6f8efb2b61ca844034eaf230945/src/net.cpp#L1445
     ThreadStart, // https://github.com/bitcoin/bitcoin/blob/2e30e328a7a46e0405664fd0cb31d971171f71d1/src/util/thread.cpp#L17
     ThreadExit, // https://github.com/bitcoin/bitcoin/blob/2e30e328a7a46e0405664fd0cb31d971171f71d1/src/util/thread.cpp#L19
-    ImportedMempoolTransactionsFromDisk,// https://github.com/bitcoin/bitcoin/blob/a7f3479ba3fda4c9fb29bd7080165744c02ee921/src/validation.cpp#L4723
+    ImportedMempoolTransactionsFromDisk, // https://github.com/bitcoin/bitcoin/blob/a7f3479ba3fda4c9fb29bd7080165744c02ee921/src/validation.cpp#L4723
     InitMessage, // https://github.com/bitcoin/bitcoin/blob/38c63e3683746774d3ddc60e32aa33af20573473/src/noui.cpp#L56
     WaitingBeforeQueryingDnsSeeds, // https://github.com/bitcoin/bitcoin/blob/d571cf2d2421c6f8efb2b61ca844034eaf230945/src/net.cpp#L1423
-    BlockRelayOnlyAnchorsWillBeTriedForConnections,  // https://github.com/bitcoin/bitcoin/blob/d571cf2d2421c6f8efb2b61ca844034eaf230945/src/net.cpp#L2284
+    BlockRelayOnlyAnchorsWillBeTriedForConnections, // https://github.com/bitcoin/bitcoin/blob/d571cf2d2421c6f8efb2b61ca844034eaf230945/src/net.cpp#L2284
 }
 
 /// Given a log line, this will return the first item
@@ -29,23 +29,20 @@ enum LogLineType {
 ///
 /// assert!(first_item.contains("2022-07-08T17:33:16Z"));
 /// ```
-pub fn get_first_item_in_log_line(log_line: &String) -> &str{
-    log_line 
-        .split_whitespace()
-        .next()
-        .expect("error!")
+pub fn get_first_item_in_log_line(log_line: &String) -> &str {
+    log_line.split_whitespace().next().expect("error!")
 }
 
- #[cfg(test)]
- mod tests {
+#[cfg(test)]
+mod tests {
     use super::*;
 
     #[test]
     fn get_first_item_in_log_line_test() {
         let log_line = String::from(
-            "2022-07-08T17:33:16Z FlushStateToDisk: write coins cache to disk (849914 coins, 123039kB) started"
+            "2021-07-08T17:33:16Z FlushStateToDisk: write coins cache to disk (849914 coins, 123039kB) started"
         );
         let first_item = get_first_item_in_log_line(&log_line);
-        assert!(first_item.contains("2022-07-08T17:33:16Z"));
+        assert!(first_item.contains("2021-07-08T17:33:16Z"));
     }
 }
