@@ -5,9 +5,11 @@
 mod utilities;
 pub mod types;
 
-// pub fn parse_log_line(log_line: &str) -> &str {
-    //parse a line and return the appropriate BitcoindLogMessage
-//}
+use types::BitcoindLogLine;
+
+pub fn parse_log_line(log_line: &str) -> BitcoindLogLine {
+    return BitcoindLogLine::parse(log_line)
+}
 
 #[cfg(test)]
 mod tests {

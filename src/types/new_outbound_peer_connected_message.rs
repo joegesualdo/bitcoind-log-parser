@@ -45,6 +45,7 @@ impl OutboundConnection {
     }
 }
 
+#[derive(Debug)]
 pub struct NewOutboundPeerConnectedMessage {
     pub version: u64,
     pub blocks: u64,

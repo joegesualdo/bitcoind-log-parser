@@ -5,6 +5,7 @@ pub use new_outbound_peer_connected_message::NewOutboundPeerConnectedMessage;
 mod log_line;
 pub use log_line::LogLine;
 
+#[derive(Debug)]
 pub enum BitcoindLogMessage {
     Unknown { raw: String },
     NewOutboundPeerConnected(NewOutboundPeerConnectedMessage), // https://github.com/bitcoin/bitcoin/blob/87d012324afa285221073540781295f1b7381a15/src/net_processing.cpp#L2992
@@ -22,6 +23,7 @@ pub enum BitcoindLogMessage {
 
 // Source: https://man.archlinux.org/man/community/bitcoin-daemon/bitcoind.1.en
 //   see -debug section
+#[derive(Debug)]
 pub enum Category {
     Addrman,
     Bench,
@@ -84,13 +86,54 @@ impl Category {
     }
 }
 
+#[derive(Debug)]
 pub struct BitcoindLogMessageContainer {
     pub message: BitcoindLogMessage,
     pub category: Option<Category>,
 }
 
+#[derive(Debug)]
 pub struct BitcoindLogLine {
     pub datetimestamp: String,
     pub process: String,
     pub message_container: BitcoindLogMessageContainer,
+}
+
+impl BitcoindLogLine {
+    pub fn parse(log_line_string: &str) -> BitcoindLogLine {
+        let log_line = LogLine::parse_into_log_line(log_line_string);
+        BitcoindLogLine::parse_log_line(log_line)
+    }
+    pub fn parse_log_line(log_line: LogLine) -> BitcoindLogLine {
+        let log_message_seperated_by_spaces: Vec<&str> = log_line.message.split(" ").collect();
+        let first_item = log_message_seperated_by_spaces[0].to_string();
+        let does_first_item_end_with_colon: bool = first_item.chars().last().unwrap() == ':';
+        let category = if does_first_item_end_with_colon {
+            let first_item_without_colon: String =
+                first_item[0..(first_item.len() - 1)].to_string();
+            Category::get_category_type(&first_item_without_colon)
+        } else {
+            None
+        };
+
+        let bitcoind_log_message =
+            if NewOutboundPeerConnectedMessage::is_new_outbound_peer_log_line(&log_line.message) {
+                NewOutboundPeerConnectedMessage::parse(&log_line.message)
+                    .unwrap_or_else(|| panic!("Ut oh"))
+            } else {
+                BitcoindLogMessage::Unknown {
+                    raw: log_line.message,
+                }
+            };
+
+        let bitcoind_log_line = BitcoindLogLine {
+            datetimestamp: log_line.header.datetimestamp,
+            process: log_line.header.process,
+            message_container: BitcoindLogMessageContainer {
+                message: bitcoind_log_message,
+                category,
+            },
+        };
+        return bitcoind_log_line;
+    }
 }
