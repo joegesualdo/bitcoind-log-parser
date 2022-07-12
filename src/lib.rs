@@ -3,6 +3,11 @@
 //! Parse Bitcoind logs
 //!
 
+struct LogLine {
+    unix_timestamp: String,
+    message: String,
+}
+
 enum LogLineType {
     NewOutboundPeerConnected, // https://github.com/bitcoin/bitcoin/blob/87d012324afa285221073540781295f1b7381a15/src/net_processing.cpp#L2992
     UpdateTip, // https://github.com/bitcoin/bitcoin/blob/a7f3479ba3fda4c9fb29bd7080165744c02ee921/src/validation.cpp#L2504
@@ -29,7 +34,7 @@ enum LogLineType {
 ///
 /// assert!(first_item.contains("2022-07-08T17:33:16Z"));
 /// ```
-pub fn get_first_item_in_log_line(log_line: &String) -> &str {
+pub fn get_first_item_in_log_line(log_line: &str) -> &str {
     log_line.split_whitespace().next().expect("error!")
 }
 
