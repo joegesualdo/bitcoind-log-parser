@@ -81,7 +81,7 @@ impl Category {
             "validation" => Some(Category::Validation),
             "walletdb" => Some(Category::Walletdb),
             "zmq" => Some(Category::Zmq),
-            unrecognized_category => None,
+            _ => None,
         }
     }
 }
@@ -118,8 +118,11 @@ impl BitcoindLogLine {
 
         let bitcoind_log_message =
             if NewOutboundPeerConnectedMessage::is_new_outbound_peer_log_line(&log_line.message) {
-                NewOutboundPeerConnectedMessage::parse(&log_line.message)
-                    .unwrap_or_else(|| panic!("Ut oh"))
+                let nopcm = NewOutboundPeerConnectedMessage::parse(&log_line.message);
+                match nopcm {
+                    Some(n) => BitcoindLogMessage::NewOutboundPeerConnected(n),
+                    None => panic!("Ut oh")
+                }
             } else {
                 BitcoindLogMessage::Unknown {
                     raw: log_line.message,

@@ -3,8 +3,6 @@ use crate::utilities::{
     remove_trailing_comma
 };
 
-use crate::types::BitcoindLogMessage;
-
 // https://github.com/bitcoin/bitcoin/blob/87d012324afa285221073540781295f1b7381a15/src/net_processing.cpp#L2992
 #[derive(Debug, PartialEq)]
 pub enum OutboundConnection {
@@ -60,7 +58,7 @@ impl NewOutboundPeerConnectedMessage {
         return message.starts_with("New outbound peer connected:");
     }
 
-    pub fn parse(message: &String) -> Option<BitcoindLogMessage> {
+    pub fn parse(message: &String) -> Option<NewOutboundPeerConnectedMessage> {
         if !Self::is_new_outbound_peer_log_line(message) {
             return None;
         }
@@ -99,7 +97,7 @@ impl NewOutboundPeerConnectedMessage {
                 connection_type = OutboundConnection::parse(part);
             }
         }
-        return Some(BitcoindLogMessage::NewOutboundPeerConnected(
+        return Some(
             NewOutboundPeerConnectedMessage {
                 version,
                 blocks,
@@ -107,8 +105,7 @@ impl NewOutboundPeerConnectedMessage {
                 peeraddr,
                 connection_type,
                 raw: message.clone(),
-            },
-        ));
+            })
     }
 }
 

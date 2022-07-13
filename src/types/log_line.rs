@@ -1,8 +1,3 @@
-struct LogLineRaw {
-    header: String,
-    message: String,
-}
-
 pub struct LogHeader {
     pub datetimestamp: String,
     pub verbosity_level: Option<String>, // bitcoind doesn't provide this
