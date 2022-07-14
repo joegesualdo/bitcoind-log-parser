@@ -11,6 +11,7 @@ pub struct LogLine {
     pub message: LogMessage,
     pub raw: String,
 }
+
 impl LogLine {
     pub fn parse_into_log_line(line_string: &str) -> LogLine {
         let log_line_seperated_by_spaces: Vec<&str> = line_string.split(" ").collect();
@@ -34,4 +35,3 @@ impl LogLine {
         return log_line;
     }
 }
-

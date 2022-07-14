@@ -1,6 +1,6 @@
 // Helpful source: https://towardsdatascience.com/understand-your-comp&uter-system-using-logs-98139d0b5de1
 use bitcoind_log_parser;
-use std::{collections::HashMap, fs};
+use std::fs;
 use bitcoind_log_parser::types::*;
 
 fn main() {
@@ -14,7 +14,7 @@ fn main() {
         // me :(
         let log_line2 = bitcoind_log_parser::parse_log_line(line);
         match log_line.message_container.message {
-            BitcoindLogMessage::NewOutboundPeerConnected(nopc) => {
+            BitcoindLogMessage::NewOutboundPeerConnected(_) => {
                 println!("{:#?}", log_line2);
             }
             BitcoindLogMessage::Unknown { raw } => {
@@ -25,12 +25,5 @@ fn main() {
             }
         }
 
-        //println!("---------------");
     }
-
-    // let first_line = lines.get(0).unwrap().clone();
-    // let rest_of_lines = &lines[0..];
-
-    // println!("first line: {}", lines[0]);
-    // println!("rest of lines: {}", rest_of_lines[2..].join(" "));
 }
