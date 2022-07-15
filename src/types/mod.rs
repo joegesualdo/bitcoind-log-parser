@@ -121,7 +121,7 @@ impl BitcoindLogLine {
                 let nopcm = NewOutboundPeerConnectedMessage::parse(&log_line.message);
                 match nopcm {
                     Some(n) => BitcoindLogMessage::NewOutboundPeerConnected(n),
-                    None => panic!("Ut oh")
+                    None => panic!("Ut oh"),
                 }
             } else {
                 BitcoindLogMessage::Unknown {

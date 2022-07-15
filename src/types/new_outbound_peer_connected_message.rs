@@ -1,7 +1,4 @@
-use crate::utilities::{
-    get_key_value_from_key_value_string,
-    remove_trailing_comma
-};
+use crate::utilities::{get_key_value_from_key_value_string, remove_trailing_comma};
 
 // https://github.com/bitcoin/bitcoin/blob/87d012324afa285221073540781295f1b7381a15/src/net_processing.cpp#L2992
 #[derive(Debug, PartialEq)]
@@ -12,7 +9,7 @@ pub enum OutboundConnection {
 
 impl OutboundConnection {
     /// Takes the outbound connection part and converts it into an OutboundConnection type
-    /// 
+    ///
     /// ```
     /// use bitcoind_log_parser::types::OutboundConnection;
     ///
@@ -27,17 +24,15 @@ impl OutboundConnection {
     /// assert_eq!(outbound_connection, OutboundConnection::OutboundFullRelay);
     /// ```
     pub fn parse(string: &str) -> OutboundConnection {
-        let connection_type_without_first_paren =  string
-            .strip_prefix('(')
-            .unwrap();
-        let connection_type_without_last_paren = connection_type_without_first_paren 
+        let connection_type_without_first_paren = string.strip_prefix('(').unwrap();
+        let connection_type_without_last_paren = connection_type_without_first_paren
             .strip_suffix(')')
             .unwrap();
         let connection_type = connection_type_without_last_paren;
         let outbound_connection = match connection_type {
             "outbound-full-relay" => OutboundConnection::OutboundFullRelay,
             "block-relay-only" => OutboundConnection::BlockRelayOnly,
-            _ => panic!("Outbound connection type not found: {}", connection_type)
+            _ => panic!("Outbound connection type not found: {}", connection_type),
         };
         outbound_connection
     }
@@ -97,15 +92,13 @@ impl NewOutboundPeerConnectedMessage {
                 connection_type = OutboundConnection::parse(part);
             }
         }
-        return Some(
-            NewOutboundPeerConnectedMessage {
-                version,
-                blocks,
-                peer,
-                peeraddr,
-                connection_type,
-                raw: message.clone(),
-            })
+        return Some(NewOutboundPeerConnectedMessage {
+            version,
+            blocks,
+            peer,
+            peeraddr,
+            connection_type,
+            raw: message.clone(),
+        });
     }
 }
-
