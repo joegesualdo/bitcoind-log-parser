@@ -1,6 +1,7 @@
 // Helpful source: https://towardsdatascience.com/understand-your-comp&uter-system-using-logs-98139d0b5de1
 use bitcoind_log_parser;
 use std::fs;
+
 use bitcoind_log_parser::types::*;
 
 fn main() {
@@ -24,6 +25,5 @@ fn main() {
                 panic!("DONT KNOW THIS KIND")
             }
         }
-
     }
 }
