@@ -1,4 +1,9 @@
+use core::fmt;
+
 use crate::utilities::{get_key_value_from_key_value_string, remove_trailing_comma};
+
+const OUTBOUND_FULL_RELAY_STR: &str = "outbound-full-relay";
+const BLOCK_RELAY_ONLY_STR: &str = "block-relay-only";
 
 // https://github.com/bitcoin/bitcoin/blob/87d012324afa285221073540781295f1b7381a15/src/net_processing.cpp#L2992
 #[derive(Debug, PartialEq)]
@@ -30,11 +35,21 @@ impl OutboundConnection {
             .unwrap();
         let connection_type = connection_type_without_last_paren;
         let outbound_connection = match connection_type {
-            "outbound-full-relay" => OutboundConnection::OutboundFullRelay,
-            "block-relay-only" => OutboundConnection::BlockRelayOnly,
+            OUTBOUND_FULL_RELAY_STR => OutboundConnection::OutboundFullRelay,
+            BLOCK_RELAY_ONLY_STR => OutboundConnection::BlockRelayOnly,
             _ => panic!("Outbound connection type not found: {}", connection_type),
         };
         outbound_connection
+    }
+}
+
+impl fmt::Display for OutboundConnection {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let s = match self {
+            OutboundConnection::BlockRelayOnly => OUTBOUND_FULL_RELAY_STR,
+            OutboundConnection::OutboundFullRelay => BLOCK_RELAY_ONLY_STR,
+        };
+        write!(f, "{}", s)
     }
 }
 

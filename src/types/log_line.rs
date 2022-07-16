@@ -1,10 +1,12 @@
+const SPACE: &str = " ";
+
+type LogMessage = String;
+
 pub struct LogHeader {
     pub datetimestamp: String,
     pub verbosity_level: Option<String>, // bitcoind doesn't provide this
     pub process: String,                 // bitcoind puts this inside brackets (i.e. [msghand])
 }
-
-type LogMessage = String;
 
 pub struct LogLine {
     pub header: LogHeader,
@@ -14,7 +16,7 @@ pub struct LogLine {
 
 impl LogLine {
     pub fn parse_into_log_line(line_string: &str) -> LogLine {
-        let log_line_seperated_by_spaces: Vec<&str> = line_string.split(" ").collect();
+        let log_line_seperated_by_spaces: Vec<&str> = line_string.split(SPACE).collect();
         let datetime = log_line_seperated_by_spaces[0].to_string();
         let process_in_brackets = log_line_seperated_by_spaces[1];
         let process: String = process_in_brackets[1..(process_in_brackets.len() - 1)].to_string();
@@ -24,7 +26,7 @@ impl LogLine {
             process,
         };
         let log_message: LogMessage = log_line_seperated_by_spaces[2..]
-            .join(" ")
+            .join(SPACE)
             .trim()
             .to_string();
         let log_line: LogLine = LogLine {

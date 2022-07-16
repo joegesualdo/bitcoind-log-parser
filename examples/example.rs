@@ -15,11 +15,12 @@ fn main() {
         // me :(
         let log_line2: BitcoindLogLine = bitcoind_log_parser::parse_log_line(line);
         match log_line.message_container.message {
-            BitcoindLogMessage::NewOutboundPeerConnected(_) => {
+            BitcoindLogMessage::NewOutboundPeerConnected(nopc) => {
                 println!("{:#?}", log_line2);
+                println!("woowee: {}", nopc.connection_type)
             }
             BitcoindLogMessage::Unknown { raw } => {
-                println!("UNKNOW_TYPE: [{}]", raw);
+                println!("UNKNOWN_TYPE: [{}]", raw);
             }
             _ => {
                 panic!("DONT KNOW THIS KIND")
