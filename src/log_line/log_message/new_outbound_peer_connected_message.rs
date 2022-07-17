@@ -1,6 +1,6 @@
 use core::fmt;
 
-use crate::utilities::{get_key_value_from_key_value_string, remove_trailing_comma};
+use crate::utils::{get_key_value_from_key_value_string, remove_trailing_comma};
 
 const OUTBOUND_FULL_RELAY_STR: &str = "outbound-full-relay";
 const BLOCK_RELAY_ONLY_STR: &str = "block-relay-only";

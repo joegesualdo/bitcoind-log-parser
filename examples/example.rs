@@ -1,13 +1,14 @@
 // Helpful source: https://towardsdatascience.com/understand-your-comp&uter-system-using-logs-98139d0b5de1
 use bitcoind_log_parser;
-use bitcoind_log_parser::types::*;
-use std::fs;
+use bitcoind_log_parser::{LogLine, LogMessage};
 
 fn main() {
-    let file_contents: String =
-        fs::read_to_string("bitcoind-log.txt").expect("failed to open file");
-    println!("here2");
-    let lines: Vec<&str> = file_contents.lines().collect();
+    // Including the file this way because fs::read_to_string (below) was throwing a confusing
+    // error.
+    let file_content = include_str!("bitcoind-log.txt");
+    // let file_content: String = fs::read_to_string(content).expect("failed to open file");
+
+    let lines: Vec<&str> = file_content.lines().collect();
 
     for line in lines {
         let log_line: LogLine = bitcoind_log_parser::parse(line).unwrap();

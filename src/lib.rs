@@ -2,10 +2,10 @@
 //!
 //! Parse Bitcoind logs
 //!
-pub mod types;
-mod utilities;
+mod log_line;
+mod utils;
 
-use types::LogLine;
+pub use log_line::{LogLine, LogMessage};
 
 #[derive(Debug)]
 pub struct ParseError;
