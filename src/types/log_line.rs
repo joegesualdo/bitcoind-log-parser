@@ -9,14 +9,16 @@ fn strip_first_and_last(s: &str) -> &str{
 }
 
 fn is_surround_by_brackets(s: &str) -> bool {
+    const OPENENING_BRACKET: char = '[';
+    const CLOSING_BRACKET: char = ']';
     let first_char = s.chars().nth(0);
     let last_char = s.chars().nth(s.len()-1);
     let starts_with_paren = match first_char {
-        Some(char) => char == '[',
+        Some(char) => char == OPENENING_BRACKET,
         None => false
     };
     let ends_with_paren = match last_char {
-        Some(char) => char == ']',
+        Some(char) => char == CLOSING_BRACKET,
         None => false
     };
     return starts_with_paren && ends_with_paren
@@ -85,7 +87,19 @@ impl LogLine {
 mod tests {
     use super::*;
     #[test]
-    fn parse_works() {
+    fn is_surround_by_brackets_fn_works() {
+        let surround_string = "[test]";
+        let non_surrounded_string = "test";
+        assert_eq!(is_surround_by_brackets(surround_string), true);
+        assert_eq!(is_surround_by_brackets(non_surrounded_string), false);
+    }
+    #[test]
+    fn strip_first_and_last_fn_works() {
+        let s = "[test]";
+        assert_eq!(strip_first_and_last(s), "test");
+    }
+    #[test]
+    fn parse_fn_works() {
         let raw_bitcoind_log_line = 
             "2022-07-12T15:12:34Z [msghand] New outbound peer connected: version: 70015, blocks=744716, peer=12, peeraddr=143.110.238.132:8333 (outbound-full-relay)";
         let log_line = LogLine::parse(raw_bitcoind_log_line).unwrap();
@@ -96,7 +110,7 @@ mod tests {
         assert_eq!(log_line.raw, raw_bitcoind_log_line);
     }
     #[test]
-    fn parse_without_process() {
+    fn parse_fn_without_process() {
         let raw_bitcoind_log_line = 
             "2022-07-12T15:12:34Z New outbound peer connected: version: 70015, blocks=744716, peer=12, peeraddr=143.110.238.132:8333 (outbound-full-relay)";
         let log_line = LogLine::parse(raw_bitcoind_log_line).unwrap();
