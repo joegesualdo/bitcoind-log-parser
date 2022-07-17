@@ -28,7 +28,7 @@ fn is_surround_by_brackets(s: &str) -> bool {
 pub struct LogHeader {
     pub datetimestamp: DateTime<FixedOffset>,
     pub verbosity_level: Option<String>, // bitcoind doesn't provide this
-    pub process: Option<String>,                 // bitcoind puts this inside brackets (i.e. [msghand])
+    pub process: Option<String>,         // bitcoind puts this inside brackets (i.e. [msghand])
 }
 
 

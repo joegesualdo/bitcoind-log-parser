@@ -1,15 +1,8 @@
-// TODO: What's the file structure/naming convention in rust?
 mod log_header;
 mod log_message;
 
 pub use log_header::LogHeader;
 pub use log_message::LogMessage;
-
-//#[derive(Debug)]
-//pub struct BitcoindLogMessageContainer {
-//    pub message: BitcoindLogMessage,
-//    pub category: Option<Category>,
-//}
 
 #[derive(Debug)]
 pub struct LogLine {
@@ -21,7 +14,7 @@ pub struct LogLine {
 pub struct ParseError;
 
 impl LogLine {
-    // TODO: refactor with less nesting
+    // TODO: Refactor with less nesting.
     pub fn parse(log_line_string: &str) -> Result<LogLine, ParseError> {
         let log_header_result = LogHeader::parse(log_line_string);
 
@@ -33,7 +26,7 @@ impl LogLine {
                         header: log_header,
                         message: log_message,
                     }),
-                    Err(err) => Err(ParseError),
+                    Err(_) => Err(ParseError),
                 }
             }
             Err(_) => Err(ParseError),
