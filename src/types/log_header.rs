@@ -24,23 +24,20 @@ fn is_surround_by_brackets(s: &str) -> bool {
     return starts_with_paren && ends_with_paren
 }
 
+#[derive(Debug)]
 pub struct LogHeader {
     pub datetimestamp: DateTime<FixedOffset>,
     pub verbosity_level: Option<String>, // bitcoind doesn't provide this
     pub process: Option<String>,                 // bitcoind puts this inside brackets (i.e. [msghand])
 }
 
-pub struct LogLine {
-    pub header: LogHeader,
-    pub message: LogMessage,
-    pub raw: String,
-}
 
 #[derive(Debug)]
 pub struct ParseError;
 
-impl LogLine {
-    pub fn parse(line_string: &str) -> Result<LogLine, ParseError> {
+impl LogHeader{
+    // Takes a log line, parses it and returns a sturctured LogHeader and the raw message string
+    pub fn parse(line_string: &str) -> Result<(LogHeader, String), ParseError> {
         let log_line_seperated_by_spaces: Vec<&str> = 
             line_string
             .split_ascii_whitespace()
@@ -74,12 +71,10 @@ impl LogLine {
             .join(SPACE)
             .trim()
             .to_string();
-        let log_line: LogLine = LogLine {
-            header: log_header,
-            message: log_message,
-            raw: line_string.to_string(),
+        let log_header: LogHeader= LogHeader{
+            ..log_header
         };
-        Ok(log_line)
+        Ok((log_header, log_message))
     }
 }
 
@@ -102,22 +97,20 @@ mod tests {
     fn parse_fn_works() {
         let raw_bitcoind_log_line = 
             "2022-07-12T15:12:34Z [msghand] New outbound peer connected: version: 70015, blocks=744716, peer=12, peeraddr=143.110.238.132:8333 (outbound-full-relay)";
-        let log_line = LogLine::parse(raw_bitcoind_log_line).unwrap();
-        assert_eq!(log_line.header.datetimestamp.to_string(), "2022-07-12 15:12:34 +00:00");
-        assert_eq!(log_line.header.verbosity_level, None);
-        assert_eq!(log_line.header.process.unwrap(), "msghand");
-        assert_eq!(log_line.message, "New outbound peer connected: version: 70015, blocks=744716, peer=12, peeraddr=143.110.238.132:8333 (outbound-full-relay)");
-        assert_eq!(log_line.raw, raw_bitcoind_log_line);
+        let log_line = LogHeader::parse(raw_bitcoind_log_line).unwrap();
+        assert_eq!(log_line.0.datetimestamp.to_string(), "2022-07-12 15:12:34 +00:00");
+        assert_eq!(log_line.0.verbosity_level, None);
+        assert_eq!(log_line.0.process.unwrap(), "msghand");
+        assert_eq!(log_line.1, "New outbound peer connected: version: 70015, blocks=744716, peer=12, peeraddr=143.110.238.132:8333 (outbound-full-relay)");
     }
     #[test]
     fn parse_fn_without_process() {
         let raw_bitcoind_log_line = 
             "2022-07-12T15:12:34Z New outbound peer connected: version: 70015, blocks=744716, peer=12, peeraddr=143.110.238.132:8333 (outbound-full-relay)";
-        let log_line = LogLine::parse(raw_bitcoind_log_line).unwrap();
-        assert_eq!(log_line.header.datetimestamp.to_string(), "2022-07-12 15:12:34 +00:00");
-        assert_eq!(log_line.header.verbosity_level, None);
-        assert_eq!(log_line.header.process, None);
-        assert_eq!(log_line.message, "New outbound peer connected: version: 70015, blocks=744716, peer=12, peeraddr=143.110.238.132:8333 (outbound-full-relay)");
-        assert_eq!(log_line.raw, raw_bitcoind_log_line);
+        let log_line = LogHeader::parse(raw_bitcoind_log_line).unwrap();
+        assert_eq!(log_line.0.datetimestamp.to_string(), "2022-07-12 15:12:34 +00:00");
+        assert_eq!(log_line.0.verbosity_level, None);
+        assert_eq!(log_line.0.process, None);
+        assert_eq!(log_line.1, "New outbound peer connected: version: 70015, blocks=744716, peer=12, peeraddr=143.110.238.132:8333 (outbound-full-relay)");
     }
 }

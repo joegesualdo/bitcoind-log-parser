@@ -5,16 +5,15 @@
 pub mod types;
 mod utilities;
 
-use types::BitcoindLogLine;
+use types::LogLine;
 
-pub fn parse(log_line: &str) -> BitcoindLogLine {
-    return BitcoindLogLine::parse(log_line);
-}
+#[derive(Debug)]
+pub struct ParseError;
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn get_first_item_in_log_line_test() {}
+pub fn parse(log_line: &str) -> Result<LogLine, ParseError> {
+    let log_line_result = LogLine::parse(log_line);
+    match log_line_result {
+        Ok(log_line) => Ok(log_line),
+        Err(_) => Err(ParseError),
+    }
 }
