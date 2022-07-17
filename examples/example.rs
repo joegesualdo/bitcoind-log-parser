@@ -10,14 +10,13 @@ fn main() {
     let lines: Vec<&str> = file_contents.lines().collect();
 
     for line in lines {
-        let log_line: BitcoindLogLine = bitcoind_log_parser::parse_log_line(line);
+        let log_line: BitcoindLogLine = bitcoind_log_parser::parse(line);
         // Creating another copy just so I can print it out later without the compiler yelling at
         // me :(
-        let log_line2: BitcoindLogLine = bitcoind_log_parser::parse_log_line(line);
+        let log_line2: BitcoindLogLine = bitcoind_log_parser::parse(line);
         match log_line.message_container.message {
             BitcoindLogMessage::NewOutboundPeerConnected(nopc) => {
                 println!("{:#?}", log_line2);
-                println!("woowee: {}", nopc.connection_type)
             }
             BitcoindLogMessage::Unknown { raw } => {
                 println!("UNKNOWN_TYPE: [{}]", raw);

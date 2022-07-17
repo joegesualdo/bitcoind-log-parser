@@ -16,17 +16,6 @@ impl OutboundConnection {
     /// Takes the outbound connection part and converts it into an OutboundConnection type
     ///
     /// ```
-    /// use bitcoind_log_parser::types::OutboundConnection;
-    ///
-    /// let outbound_connection_string_from_log_line = "(block-relay-only)";
-    /// let outbound_connection = OutboundConnection::parse(outbound_connection_string_from_log_line);
-    ///
-    /// assert_eq!(outbound_connection, OutboundConnection::BlockRelayOnly);
-    ///
-    /// let outbound_connection_string_from_log_line = "(outbound-full-relay)";
-    /// let outbound_connection = OutboundConnection::parse(outbound_connection_string_from_log_line);
-    ///
-    /// assert_eq!(outbound_connection, OutboundConnection::OutboundFullRelay);
     /// ```
     pub fn parse(string: &str) -> OutboundConnection {
         let connection_type_without_first_paren = string.strip_prefix('(').unwrap();

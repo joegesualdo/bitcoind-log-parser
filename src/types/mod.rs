@@ -129,13 +129,13 @@ pub struct BitcoindLogMessageContainer {
 #[derive(Debug)]
 pub struct BitcoindLogLine {
     pub datetimestamp: String,
-    pub process: String,
+    pub process: Option<String>,
     pub message_container: BitcoindLogMessageContainer,
 }
 
 impl BitcoindLogLine {
     pub fn parse(log_line_string: &str) -> BitcoindLogLine {
-        let log_line = LogLine::parse_into_log_line(log_line_string);
+        let log_line = LogLine::parse(log_line_string).unwrap();
         BitcoindLogLine::parse_log_line(log_line)
     }
     pub fn parse_log_line(log_line: LogLine) -> BitcoindLogLine {
@@ -164,7 +164,7 @@ impl BitcoindLogLine {
             };
 
         let bitcoind_log_line = BitcoindLogLine {
-            datetimestamp: log_line.header.datetimestamp,
+            datetimestamp: log_line.header.datetimestamp.to_string(),
             process: log_line.header.process,
             message_container: BitcoindLogMessageContainer {
                 message: bitcoind_log_message,
