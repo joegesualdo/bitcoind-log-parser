@@ -2,46 +2,6 @@ use core::fmt;
 
 use crate::utils::{get_key_value_from_key_value_string, remove_trailing_comma};
 
-const OUTBOUND_FULL_RELAY_STR: &str = "outbound-full-relay";
-const BLOCK_RELAY_ONLY_STR: &str = "block-relay-only";
-
-// https://github.com/bitcoin/bitcoin/blob/87d012324afa285221073540781295f1b7381a15/src/net_processing.cpp#L2992
-#[derive(Debug, PartialEq)]
-pub enum OutboundConnection {
-    OutboundFullRelay,
-    BlockRelayOnly,
-}
-
-impl OutboundConnection {
-    /// Takes the outbound connection part and converts it into an OutboundConnection type
-    ///
-    /// ```
-    /// ```
-    pub fn parse(string: &str) -> OutboundConnection {
-        let connection_type_without_first_paren = string.strip_prefix('(').unwrap();
-        let connection_type_without_last_paren = connection_type_without_first_paren
-            .strip_suffix(')')
-            .unwrap();
-        let connection_type = connection_type_without_last_paren;
-        let outbound_connection = match connection_type {
-            OUTBOUND_FULL_RELAY_STR => OutboundConnection::OutboundFullRelay,
-            BLOCK_RELAY_ONLY_STR => OutboundConnection::BlockRelayOnly,
-            _ => panic!("Outbound connection type not found: {}", connection_type),
-        };
-        outbound_connection
-    }
-}
-
-impl fmt::Display for OutboundConnection {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let s = match self {
-            OutboundConnection::BlockRelayOnly => OUTBOUND_FULL_RELAY_STR,
-            OutboundConnection::OutboundFullRelay => BLOCK_RELAY_ONLY_STR,
-        };
-        write!(f, "{}", s)
-    }
-}
-
 #[derive(Debug)]
 pub struct NewOutboundPeerConnectedMessage {
     pub version: u64,
@@ -52,6 +12,7 @@ pub struct NewOutboundPeerConnectedMessage {
     pub raw: String,
 }
 
+// TODO: Write tests and refactor
 impl NewOutboundPeerConnectedMessage {
     pub fn is_new_outbound_peer_log_line(message: &String) -> bool {
         return message.starts_with("New outbound peer connected:");
@@ -104,5 +65,45 @@ impl NewOutboundPeerConnectedMessage {
             connection_type,
             raw: message.clone(),
         });
+    }
+}
+
+const OUTBOUND_FULL_RELAY_STR: &str = "outbound-full-relay";
+const BLOCK_RELAY_ONLY_STR: &str = "block-relay-only";
+
+// https://github.com/bitcoin/bitcoin/blob/87d012324afa285221073540781295f1b7381a15/src/net_processing.cpp#L2992
+#[derive(Debug, PartialEq)]
+pub enum OutboundConnection {
+    OutboundFullRelay,
+    BlockRelayOnly,
+}
+
+impl OutboundConnection {
+    /// Takes the outbound connection part and converts it into an OutboundConnection type
+    ///
+    /// ```
+    /// ```
+    pub fn parse(string: &str) -> OutboundConnection {
+        let connection_type_without_first_paren = string.strip_prefix('(').unwrap();
+        let connection_type_without_last_paren = connection_type_without_first_paren
+            .strip_suffix(')')
+            .unwrap();
+        let connection_type = connection_type_without_last_paren;
+        let outbound_connection = match connection_type {
+            OUTBOUND_FULL_RELAY_STR => OutboundConnection::OutboundFullRelay,
+            BLOCK_RELAY_ONLY_STR => OutboundConnection::BlockRelayOnly,
+            _ => panic!("Outbound connection type not found: {}", connection_type),
+        };
+        outbound_connection
+    }
+}
+
+impl fmt::Display for OutboundConnection {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let s = match self {
+            OutboundConnection::BlockRelayOnly => OUTBOUND_FULL_RELAY_STR,
+            OutboundConnection::OutboundFullRelay => BLOCK_RELAY_ONLY_STR,
+        };
+        write!(f, "{}", s)
     }
 }

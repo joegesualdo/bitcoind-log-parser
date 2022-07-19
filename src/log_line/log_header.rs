@@ -49,6 +49,7 @@ impl LogHeader{
         let is_process_included = is_surround_by_brackets(next_item_after_datetime);
         let process: Option<String> = 
             if is_process_included && is_surround_by_brackets(next_item_after_datetime) {
+                // TODO: Can probably use String.trim_matches() method to remove the brackets
                 Some(strip_first_and_last(next_item_after_datetime).to_string())
             } else {
                 None
