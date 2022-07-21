@@ -1,3 +1,4 @@
 /target
 /Cargo.lock
 /examples/bitcoind-log.txt
+.DS_Store

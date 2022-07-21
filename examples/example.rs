@@ -16,6 +16,9 @@ fn main() {
             LogMessage::NewOutboundPeerConnected(_) => {
                 println!("{:#?}", &log_line);
             }
+            LogMessage::TransactionAddedToMempool(_) => {
+                println!("{:#?}", &log_line);
+            }
             LogMessage::Unknown { raw: _raw } => {
                 println!("{:#?}", &log_line);
             }

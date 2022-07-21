@@ -1,5 +1,8 @@
 mod new_outbound_peer_connected_message;
+mod transaction_added_to_mempool_message;
 use new_outbound_peer_connected_message::NewOutboundPeerConnectedMessage;
+
+use self::transaction_added_to_mempool_message::TransactionAddedToMempoolMessage;
 
 #[derive(Debug)]
 pub enum LogMessage {
@@ -15,6 +18,7 @@ pub enum LogMessage {
     InitMessage, // https://github.com/bitcoin/bitcoin/blob/38c63e3683746774d3ddc60e32aa33af20573473/src/noui.cpp#L56
     WaitingBeforeQueryingDnsSeeds, // https://github.com/bitcoin/bitcoin/blob/d571cf2d2421c6f8efb2b61ca844034eaf230945/src/net.cpp#L1423
     BlockRelayOnlyAnchorsWillBeTriedForConnections, // https://github.com/bitcoin/bitcoin/blob/d571cf2d2421c6f8efb2b61ca844034eaf230945/src/net.cpp#L2284
+    TransactionAddedToMempool(TransactionAddedToMempoolMessage), // https://github.com/bitcoin/bitcoin/blob/66e3b16b8b1033414f843058f360e22b725d89c5/src/validationinterface.cpp#L209
 }
 
 #[derive(Debug)]
@@ -27,6 +31,14 @@ impl LogMessage {
             let nopcm = NewOutboundPeerConnectedMessage::parse(&raw_log_message);
             match nopcm {
                 Some(n) => Ok(LogMessage::NewOutboundPeerConnected(n)),
+                None => Err(ParseError),
+            }
+        } else if TransactionAddedToMempoolMessage::is_transaction_added_to_mempool_log_line(
+            &raw_log_message,
+        ) {
+            let tatmp = TransactionAddedToMempoolMessage::parse(&raw_log_message);
+            match tatmp {
+                Some(t) => Ok(LogMessage::TransactionAddedToMempool(t)),
                 None => Err(ParseError),
             }
         } else {
