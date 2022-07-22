@@ -1,8 +1,9 @@
 mod new_outbound_peer_connected_message;
+mod new_pow_valid_block_message;
 mod transaction_added_to_mempool_message;
 use new_outbound_peer_connected_message::NewOutboundPeerConnectedMessage;
-
-use self::transaction_added_to_mempool_message::TransactionAddedToMempoolMessage;
+use new_pow_valid_block_message::NewPoWValidBlockMessage;
+use transaction_added_to_mempool_message::TransactionAddedToMempoolMessage;
 
 #[derive(Debug)]
 pub enum LogMessage {
@@ -19,6 +20,7 @@ pub enum LogMessage {
     WaitingBeforeQueryingDnsSeeds, // https://github.com/bitcoin/bitcoin/blob/d571cf2d2421c6f8efb2b61ca844034eaf230945/src/net.cpp#L1423
     BlockRelayOnlyAnchorsWillBeTriedForConnections, // https://github.com/bitcoin/bitcoin/blob/d571cf2d2421c6f8efb2b61ca844034eaf230945/src/net.cpp#L2284
     TransactionAddedToMempool(TransactionAddedToMempoolMessage), // https://github.com/bitcoin/bitcoin/blob/66e3b16b8b1033414f843058f360e22b725d89c5/src/validationinterface.cpp#L209
+    NewPoWValidBlock(NewPoWValidBlockMessage), // https://github.com/bitcoin/bitcoin/blob/66e3b16b8b1033414f843058f360e22b725d89c5/src/validationinterface.cpp#L257
     // DOCS about inv: https://developer.bitcoin.org/reference/p2p_networking.html#inv
     GotInvTx, // https://github.com/bitcoin/bitcoin/blob/948f5ba6363fcc64f95fed3f04dbda3d50d61827/src/net_processing.cpp#L3237 OR https://github.com/bitcoin/bitcoin/blob/948f5ba6363fcc64f95fed3f04dbda3d50d61827/src/net_processing.cpp#L3256
     GotInvWtx,
@@ -43,6 +45,12 @@ impl LogMessage {
             match tatmp {
                 Some(t) => Ok(LogMessage::TransactionAddedToMempool(t)),
                 None => Err(ParseError),
+            }
+        } else if NewPoWValidBlockMessage::is_valid(&raw_log_message) {
+            let npowvbm = NewPoWValidBlockMessage::parse(&raw_log_message);
+            match npowvbm {
+                Ok(t) => Ok(LogMessage::NewPoWValidBlock(t)),
+                Err(_) => Err(ParseError),
             }
         } else {
             Ok(LogMessage::Unknown {
