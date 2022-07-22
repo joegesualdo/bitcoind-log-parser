@@ -44,7 +44,10 @@ fn main() {
             }
             LogMessage::TransactionAddedToMempool(tatmp) => {
                 //println!("{:#?}", &log_line);
-                println!("{:#?}", tatmp.txid);
+                //println!("{:#?}", tatmp.txid);
+            }
+            LogMessage::NewPoWValidBlock(npowvbm) => {
+                println!("{:#?}", &log_line);
             }
             LogMessage::Unknown { raw: _raw } => {
                 // println!("{:#?}", &log_line);
