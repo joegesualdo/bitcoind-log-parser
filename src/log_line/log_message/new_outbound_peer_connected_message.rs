@@ -1,5 +1,9 @@
 use core::fmt;
 
+use crate::log_line::log_message::message::Message;
+use crate::log_line::log_message::parse_error::ParseError;
+use crate::log_line::log_message::parse_result::ParseResult;
+
 use crate::utils::{get_key_value_from_key_value_string, remove_trailing_comma};
 
 #[derive(Debug)]
@@ -12,15 +16,14 @@ pub struct NewOutboundPeerConnectedMessage {
     pub raw: String,
 }
 
-// TODO: Write tests and refactor
-impl NewOutboundPeerConnectedMessage {
-    pub fn is_new_outbound_peer_log_line(message: &String) -> bool {
+impl Message<NewOutboundPeerConnectedMessage> for NewOutboundPeerConnectedMessage {
+    fn is_valid(message: &str) -> bool {
         return message.starts_with("New outbound peer connected:");
     }
 
-    pub fn parse(message: &String) -> Option<NewOutboundPeerConnectedMessage> {
-        if !Self::is_new_outbound_peer_log_line(message) {
-            return None;
+    fn parse(message: &str) -> ParseResult<NewOutboundPeerConnectedMessage> {
+        if !Self::is_valid(message) {
+            return Err(ParseError);
         }
 
         let message_seperated_by_spaces: Vec<&str> = message.split(" ").collect();
@@ -57,13 +60,13 @@ impl NewOutboundPeerConnectedMessage {
                 connection_type = OutboundConnection::parse(part);
             }
         }
-        return Some(NewOutboundPeerConnectedMessage {
+        return Ok(NewOutboundPeerConnectedMessage {
             version,
             blocks,
             peer,
             peeraddr,
             connection_type,
-            raw: message.clone(),
+            raw: message.to_string(),
         });
     }
 }

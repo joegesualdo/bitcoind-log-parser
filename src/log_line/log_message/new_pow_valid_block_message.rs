@@ -1,5 +1,8 @@
 use std::io;
 
+use crate::log_line::log_message::message::Message;
+use crate::log_line::log_message::parse_error::ParseError;
+use crate::log_line::log_message::parse_result::ParseResult;
 use crate::utils::get_key_value_from_key_value_string;
 
 #[derive(Debug)]
@@ -7,15 +10,12 @@ pub struct NewPoWValidBlockMessage {
     hash: String,
 }
 
-#[derive(Debug)]
-pub struct ParseError;
-
-impl NewPoWValidBlockMessage {
-    pub fn is_valid(raw_message: &str) -> bool {
+impl Message<NewPoWValidBlockMessage> for NewPoWValidBlockMessage {
+    fn is_valid(raw_message: &str) -> bool {
         let is_valid = raw_message.starts_with("NewPoWValidBlock:");
         is_valid
     }
-    pub fn parse(raw_message: &str) -> Result<NewPoWValidBlockMessage, ParseError> {
+    fn parse(raw_message: &str) -> ParseResult<NewPoWValidBlockMessage> {
         if !Self::is_valid(raw_message) {
             return Err(ParseError);
         } else {
