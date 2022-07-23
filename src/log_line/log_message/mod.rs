@@ -1,8 +1,13 @@
+mod message;
 mod new_outbound_peer_connected_message;
 mod new_pow_valid_block_message;
+mod parse_error;
+mod parse_result;
 mod transaction_added_to_mempool_message;
+use message::Message;
 use new_outbound_peer_connected_message::NewOutboundPeerConnectedMessage;
 use new_pow_valid_block_message::NewPoWValidBlockMessage;
+use parse_error::ParseError;
 use transaction_added_to_mempool_message::TransactionAddedToMempoolMessage;
 
 #[derive(Debug)]
@@ -26,25 +31,20 @@ pub enum LogMessage {
     GotInvWtx,
 }
 
-#[derive(Debug)]
-pub struct ParseError;
-
 impl LogMessage {
     pub fn parse(raw_log_message: String) -> Result<LogMessage, ParseError> {
-        if NewOutboundPeerConnectedMessage::is_new_outbound_peer_log_line(&raw_log_message) {
+        if NewOutboundPeerConnectedMessage::is_valid(&raw_log_message) {
             // TODO: Switch this to return a Result, instead of an Option.
             let nopcm = NewOutboundPeerConnectedMessage::parse(&raw_log_message);
             match nopcm {
-                Some(n) => Ok(LogMessage::NewOutboundPeerConnected(n)),
-                None => Err(ParseError),
+                Ok(n) => Ok(LogMessage::NewOutboundPeerConnected(n)),
+                Err(err) => Err(err),
             }
-        } else if TransactionAddedToMempoolMessage::is_transaction_added_to_mempool_log_line(
-            &raw_log_message,
-        ) {
+        } else if TransactionAddedToMempoolMessage::is_valid(&raw_log_message) {
             let tatmp = TransactionAddedToMempoolMessage::parse(&raw_log_message);
             match tatmp {
-                Some(t) => Ok(LogMessage::TransactionAddedToMempool(t)),
-                None => Err(ParseError),
+                Ok(t) => Ok(LogMessage::TransactionAddedToMempool(t)),
+                Err(err) => Err(err),
             }
         } else if NewPoWValidBlockMessage::is_valid(&raw_log_message) {
             let npowvbm = NewPoWValidBlockMessage::parse(&raw_log_message);
