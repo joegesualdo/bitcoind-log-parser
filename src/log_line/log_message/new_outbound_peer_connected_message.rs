@@ -135,9 +135,17 @@ mod tests {
         assert_eq!(message.peer, 304);
         assert_eq!(message.peeraddr, "47.149.52.113:8333");
         assert_eq!(message.connection_type, OutboundConnection::BlockRelayOnly);
-        let invalid_message_str = "test";
-        let parsed_result = NewOutboundPeerConnectedMessage::parse(invalid_message_str);
-        let nopc_message = parsed_result;
-        assert!(nopc_message.is_err());
+        let invalid_test_cases = vec![
+            "test",
+            "test: version: 70016, blocks=744842, peer=304, peeraddr=47.149.52.113:8333 (block-relay-only)",
+            "test: version: blocks=744842, peer=304, peeraddr=47.149.52.113:8333 (block-relay-only)",
+            // TODO: Add more invalid cases
+            // "New outbound peer connected: version: 70016, blocks=744842, peer=304, peeraddr=47.149.52.113:8333 (block-relay-only)";
+        ];
+        for invalid_test_case in invalid_test_cases {
+            let parsed_result = NewOutboundPeerConnectedMessage::parse(invalid_test_case);
+            let nopc_message = parsed_result;
+            assert!(nopc_message.is_err());
+        }
     }
 }
