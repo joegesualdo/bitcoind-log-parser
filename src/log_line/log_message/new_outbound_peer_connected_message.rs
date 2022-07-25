@@ -110,3 +110,34 @@ impl fmt::Display for OutboundConnection {
         write!(f, "{}", s)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn is_valid_works() {
+        let valid_nopc_message = "New outbound peer connected: version: 70016, blocks=744842, peer=304, peeraddr=47.149.52.113:8333 (block-relay-only)";
+        let is_valid = NewOutboundPeerConnectedMessage::is_valid(valid_nopc_message);
+        assert_eq!(is_valid, true);
+
+        let not_valid_nopc_message = "test";
+        let is_valid = NewOutboundPeerConnectedMessage::is_valid(not_valid_nopc_message);
+        assert_eq!(is_valid, false);
+    }
+    #[test]
+    fn parse_works() {
+        let valid_message_str = "New outbound peer connected: version: 70016, blocks=744842, peer=304, peeraddr=47.149.52.113:8333 (block-relay-only)";
+        let parsed_result = NewOutboundPeerConnectedMessage::parse(valid_message_str);
+        let message = parsed_result.unwrap();
+        assert_eq!(message.version, 70016);
+        assert_eq!(message.blocks, 744842);
+        assert_eq!(message.peer, 304);
+        assert_eq!(message.peeraddr, "47.149.52.113:8333");
+        assert_eq!(message.connection_type, OutboundConnection::BlockRelayOnly);
+        let invalid_message_str = "test";
+        let parsed_result = NewOutboundPeerConnectedMessage::parse(invalid_message_str);
+        let nopc_message = parsed_result;
+        assert!(nopc_message.is_err());
+    }
+}
