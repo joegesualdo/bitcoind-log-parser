@@ -9,12 +9,12 @@ pub struct TransactionAddedToMempoolMessage {
     pub wtxid: String,
 }
 
-impl Message<TransactionAddedToMempoolMessage> for TransactionAddedToMempoolMessage {
+impl Message<Self> for TransactionAddedToMempoolMessage {
     fn is_valid(message: &str) -> bool {
         return message.starts_with("TransactionAddedToMempool:");
     }
 
-    fn parse(message: &str) -> ParseResult<TransactionAddedToMempoolMessage> {
+    fn parse(message: &str) -> ParseResult<Self> {
         if !Self::is_valid(message) {
             return Err(ParseError);
         }
@@ -27,7 +27,7 @@ impl Message<TransactionAddedToMempoolMessage> for TransactionAddedToMempoolMess
         let wtxid_key_and_value = get_key_value_from_key_value_string(wtxid_part);
         let wtxid = wtxid_key_and_value[1];
 
-        Ok(TransactionAddedToMempoolMessage {
+        Ok(Self {
             txid: txid.to_string(),
             wtxid: wtxid.to_string(),
         })

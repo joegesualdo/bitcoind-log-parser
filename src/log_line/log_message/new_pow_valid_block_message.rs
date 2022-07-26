@@ -10,12 +10,12 @@ pub struct NewPoWValidBlockMessage {
     hash: String,
 }
 
-impl Message<NewPoWValidBlockMessage> for NewPoWValidBlockMessage {
+impl Message<Self> for NewPoWValidBlockMessage {
     fn is_valid(raw_message: &str) -> bool {
         let is_valid = raw_message.starts_with("NewPoWValidBlock:");
         is_valid
     }
-    fn parse(raw_message: &str) -> ParseResult<NewPoWValidBlockMessage> {
+    fn parse(raw_message: &str) -> ParseResult<Self> {
         if !Self::is_valid(raw_message) {
             return Err(ParseError);
         } else {
@@ -23,7 +23,7 @@ impl Message<NewPoWValidBlockMessage> for NewPoWValidBlockMessage {
             let hash_key_value_str = message_split_by_spaces[2];
             let hash_key_value = get_key_value_from_key_value_string(hash_key_value_str);
             let hash_value = hash_key_value[1];
-            Ok(NewPoWValidBlockMessage {
+            Ok(Self {
                 hash: hash_value.to_string(),
             })
         }

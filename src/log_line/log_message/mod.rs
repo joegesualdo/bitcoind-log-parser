@@ -32,28 +32,28 @@ pub enum LogMessage {
 }
 
 impl LogMessage {
-    pub fn parse(raw_log_message: String) -> Result<LogMessage, ParseError> {
+    pub fn parse(raw_log_message: String) -> Result<Self, ParseError> {
         if NewOutboundPeerConnectedMessage::is_valid(&raw_log_message) {
             // TODO: Switch this to return a Result, instead of an Option.
             let nopcm = NewOutboundPeerConnectedMessage::parse(&raw_log_message);
             match nopcm {
-                Ok(n) => Ok(LogMessage::NewOutboundPeerConnected(n)),
+                Ok(n) => Ok(Self::NewOutboundPeerConnected(n)),
                 Err(err) => Err(err),
             }
         } else if TransactionAddedToMempoolMessage::is_valid(&raw_log_message) {
             let tatmp = TransactionAddedToMempoolMessage::parse(&raw_log_message);
             match tatmp {
-                Ok(t) => Ok(LogMessage::TransactionAddedToMempool(t)),
+                Ok(t) => Ok(Self::TransactionAddedToMempool(t)),
                 Err(err) => Err(err),
             }
         } else if NewPoWValidBlockMessage::is_valid(&raw_log_message) {
             let npowvbm = NewPoWValidBlockMessage::parse(&raw_log_message);
             match npowvbm {
-                Ok(t) => Ok(LogMessage::NewPoWValidBlock(t)),
+                Ok(t) => Ok(Self::NewPoWValidBlock(t)),
                 Err(_) => Err(ParseError),
             }
         } else {
-            Ok(LogMessage::Unknown {
+            Ok(Self::Unknown {
                 raw: raw_log_message,
             })
         }

@@ -16,12 +16,12 @@ pub struct NewOutboundPeerConnectedMessage {
     pub raw: String,
 }
 
-impl Message<NewOutboundPeerConnectedMessage> for NewOutboundPeerConnectedMessage {
+impl Message<Self> for NewOutboundPeerConnectedMessage {
     fn is_valid(message: &str) -> bool {
         return message.starts_with("New outbound peer connected:");
     }
 
-    fn parse(message: &str) -> ParseResult<NewOutboundPeerConnectedMessage> {
+    fn parse(message: &str) -> ParseResult<Self> {
         if !Self::is_valid(message) {
             return Err(ParseError);
         }
@@ -60,7 +60,7 @@ impl Message<NewOutboundPeerConnectedMessage> for NewOutboundPeerConnectedMessag
                 connection_type = OutboundConnection::parse(part);
             }
         }
-        return Ok(NewOutboundPeerConnectedMessage {
+        return Ok(Self {
             version,
             blocks,
             peer,
@@ -86,15 +86,15 @@ impl OutboundConnection {
     ///
     /// ```
     /// ```
-    pub fn parse(string: &str) -> OutboundConnection {
+    pub fn parse(string: &str) -> Self {
         let connection_type_without_first_paren = string.strip_prefix('(').unwrap();
         let connection_type_without_last_paren = connection_type_without_first_paren
             .strip_suffix(')')
             .unwrap();
         let connection_type = connection_type_without_last_paren;
         let outbound_connection = match connection_type {
-            OUTBOUND_FULL_RELAY_STR => OutboundConnection::OutboundFullRelay,
-            BLOCK_RELAY_ONLY_STR => OutboundConnection::BlockRelayOnly,
+            OUTBOUND_FULL_RELAY_STR => Self::OutboundFullRelay,
+            BLOCK_RELAY_ONLY_STR => Self::BlockRelayOnly,
             _ => panic!("Outbound connection type not found: {}", connection_type),
         };
         outbound_connection
@@ -104,8 +104,8 @@ impl OutboundConnection {
 impl fmt::Display for OutboundConnection {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let s = match self {
-            OutboundConnection::BlockRelayOnly => OUTBOUND_FULL_RELAY_STR,
-            OutboundConnection::OutboundFullRelay => BLOCK_RELAY_ONLY_STR,
+            Self::BlockRelayOnly => OUTBOUND_FULL_RELAY_STR,
+            Self::OutboundFullRelay => BLOCK_RELAY_ONLY_STR,
         };
         write!(f, "{}", s)
     }

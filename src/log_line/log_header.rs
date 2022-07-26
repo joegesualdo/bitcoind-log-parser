@@ -37,7 +37,7 @@ pub struct ParseError;
 
 impl LogHeader{
     // Takes a log line, parses it and returns a sturctured LogHeader and the raw message string
-    pub fn parse(line_string: &str) -> Result<(LogHeader, String), ParseError> {
+    pub fn parse(line_string: &str) -> Result<(Self, String), ParseError> {
         let log_line_seperated_by_spaces: Vec<&str> = 
             line_string
             .split_ascii_whitespace()
@@ -62,7 +62,7 @@ impl LogHeader{
         };
         
 
-        let log_header: LogHeader = LogHeader {
+        let log_header: Self = Self{
             datetimestamp: datetime,
             verbosity_level: None,
             process,
@@ -72,7 +72,7 @@ impl LogHeader{
             .join(SPACE)
             .trim()
             .to_string();
-        let log_header: LogHeader= LogHeader{
+        let log_header: Self = Self{
             ..log_header
         };
         Ok((log_header, log_message))
