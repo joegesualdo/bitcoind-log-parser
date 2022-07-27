@@ -1,5 +1,7 @@
 use chrono::{DateTime, FixedOffset};
 
+use crate::ParseError;
+
 const SPACE: &str = " ";
 
 type LogMessage = String;
@@ -31,9 +33,6 @@ pub struct LogHeader {
     pub process: Option<String>,         // bitcoind puts this inside brackets (i.e. [msghand])
 }
 
-
-#[derive(Debug)]
-pub struct ParseError;
 
 impl LogHeader{
     // Takes a log line, parses it and returns a sturctured LogHeader and the raw message string

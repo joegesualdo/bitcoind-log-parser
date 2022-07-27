@@ -4,14 +4,13 @@ mod log_message;
 pub use log_header::LogHeader;
 pub use log_message::LogMessage;
 
+use crate::ParseError;
+
 #[derive(Debug)]
 pub struct LogLine {
     pub header: LogHeader,
     pub message: LogMessage,
 }
-
-#[derive(Debug)]
-pub struct ParseError;
 
 impl LogLine {
     // TODO: Refactor with less nesting.
