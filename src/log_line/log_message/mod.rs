@@ -50,7 +50,7 @@ impl LogMessage {
             let npowvbm = NewPoWValidBlockMessage::parse(&raw_log_message);
             match npowvbm {
                 Ok(t) => Ok(Self::NewPoWValidBlock(t)),
-                Err(_) => Err(ParseError),
+                Err(err) => Err(err),
             }
         } else {
             Ok(Self::Unknown {
