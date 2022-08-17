@@ -8,6 +8,9 @@ pub fn get_key_value_from_key_value_string(key_value_string: &str) -> Vec<&str> 
 }
 
 pub fn remove_trailing_comma(string: &str) -> &str {
-    string.strip_suffix(',').unwrap()
+    match string.strip_suffix(',') {
+        Some(new_string) => new_string,
+        None => string,
+    }
 }
 // END Utilities ============
